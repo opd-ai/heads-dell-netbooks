@@ -9,7 +9,10 @@ This repository defines an assistant workflow for safely guiding users through p
 ### Supported boards
 - **WOLF** (Dell Chromebook 11)
 - **LULU** (Dell Chromebook 13)
-- **Incompatible device warning:** Dell Chromebook 3120 is not compatible with wolf. Do not continue on the wolf path for a 3120; first map the device to its correct board/HWID target in trusted coreboot/HEADS documentation. Flashing wolf images to a 3120 can hard-brick the device and may require external SPI recovery.
+
+## Device compatibility warnings
+
+> **Dell Chromebook 3120 is not compatible with wolf.** Do not continue on the wolf path for a 3120; first map the device to its correct board/HWID target in trusted coreboot/HEADS documentation. Flashing wolf images to a 3120 can hard-brick the device and may require external SPI recovery.
 
 ## Critical safety gate (must pass before any assistance)
 Always verify all items below before proceeding with guidance:
@@ -44,7 +47,7 @@ If any item is missing or unverified, stop and direct the user to complete safet
 ### Stage 4: lulu Fork & FSP/ME Pipeline
 - ME neutralization (`me_cleaner` flags)
 - Broadwell FSP acquisition and pinning
-- Microcode update for CPUID signature `0x0306D4` (same CPUID value shown as family-model-stepping `06-3D-04` in some tools)
+- Microcode update for CPUID signature `0x0306D4` (alternatively displayed as family 06, model 3D, stepping 04 in some tools)
   - Pin the exact microcode blob used for the build
   - Record version and SHA256 hash in build metadata/manifests
   - Reuse that exact artifact for rebuilds
