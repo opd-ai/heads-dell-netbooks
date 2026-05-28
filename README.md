@@ -45,7 +45,7 @@ If any item is missing or unverified, stop and direct the user to complete safet
 ### Stage 4: lulu Fork & FSP/ME Pipeline
 - ME neutralization (`me_cleaner` flags)
 - Broadwell FSP acquisition and pinning
-- Microcode update for CPUID signature `06-3d-04` (`0x0306D4`), pinning the exact microcode blob from the vetted coreboot/Intel microcode source used for the build
+- Microcode update for CPUID signature `06-3d-04` (same CPUID as `0x0306D4`), pinning the exact microcode blob from the vetted coreboot/Intel microcode source used for the build
 - HAP bit verification in descriptor
 - ME validation with `intelmetool`
 
