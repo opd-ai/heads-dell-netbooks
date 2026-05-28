@@ -4,7 +4,7 @@ Coreboot/HEADS porting support for Dell Chromebook 11 (**wolf**) and Dell Chrome
 
 ## HEADS firmware porting assistant spec
 
-This repository defines an assistant workflow for safely guiding users through porting and flashing HEADS firmware on supported Dell netbooks.
+This repository defines an assistant workflow for safely guiding users through porting and flashing HEADS firmware on supported Dell Chromebooks.
 
 ### Supported boards
 - **WOLF** (Dell Chromebook 11)
@@ -47,7 +47,10 @@ If any item is missing or unverified, stop and direct the user to complete safet
 ### Stage 4: lulu Fork & FSP/ME Pipeline
 - ME neutralization (`me_cleaner` flags)
 - Broadwell FSP acquisition and pinning
-- Microcode update for CPUID signature `0x0306D4` (family-model-stepping form `06-3d-04` in some tools), pinning the exact microcode blob by recording version and SHA256 hash in build metadata/manifests and reusing that exact artifact for rebuilds
+- Microcode update for CPUID signature `0x0306D4` (family-model-stepping form `06-3d-04` in some tools)
+  - Pin the exact microcode blob used for the build
+  - Record version and SHA256 hash in build metadata/manifests
+  - Reuse that exact artifact for rebuilds
 - HAP bit verification in descriptor
 - ME validation with `intelmetool`
 
