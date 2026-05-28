@@ -17,7 +17,7 @@ Always verify all items below before proceeding with guidance:
 1. Hardware confirmed via HWID prefix (**WOLF** or **LULU** only)
 2. Firmware backup completed with verified SHA256 match
 3. Restore-from-backup has been tested successfully
-4. User explicitly understands 3120 incompatibility with wolf
+4. Device is confirmed not to be Dell Chromebook 3120 when following wolf flow
 
 If any item is missing or unverified, stop and direct the user to complete safety prerequisites first.
 
@@ -45,8 +45,8 @@ If any item is missing or unverified, stop and direct the user to complete safet
 ### Stage 4: lulu Fork & FSP/ME Pipeline
 - ME neutralization (`me_cleaner` flags)
 - Broadwell FSP acquisition and pinning
-- Microcode update for CPUID signature `0x0306D4` (`06-3d-04` in some tools)
-- Pin the exact microcode blob from the vetted coreboot/Intel microcode source used for the build
+- Microcode update for CPUID signature `0x0306D4` (family-model-stepping form `06-3d-04` in some tools)
+- Pin the exact microcode blob by recording version and SHA256 hash in build metadata/manifests and reusing that exact artifact for rebuilds
 - HAP bit verification in descriptor
 - ME validation with `intelmetool`
 
