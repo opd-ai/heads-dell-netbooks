@@ -192,9 +192,12 @@ fetch_microcode() {
 fetch_recovery_conf
 
 case "$BOARD" in
-  wolf) fetch_board wolf "$WOLF_CODENAME" ;;
-  lulu) fetch_board lulu "$LULU_CODENAME" ;;
-  both) fetch_board wolf "$WOLF_CODENAME"; fetch_board lulu "$LULU_CODENAME" ;;
+  wolf) fetch_board wolf "$WOLF_CODENAME" || exit 1 ;;
+  lulu) fetch_board lulu "$LULU_CODENAME" || exit 1 ;;
+  both)
+    fetch_board wolf "$WOLF_CODENAME" || exit 1
+    fetch_board lulu "$LULU_CODENAME" || exit 1
+    ;;
 esac
 
 fetch_microcode
