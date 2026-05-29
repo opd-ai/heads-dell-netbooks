@@ -38,51 +38,61 @@ The two ports share approximately 70% of the work: build environment, HEADS fram
 
 ## Stage 1: Foundation (Both Boards)
 
+> **Status: deliverables generated.** Setup/acquisition scripts under
+> `boards/scripts/` and execution handoffs under `reports/stage-1.*.md`.
+> Items are marked complete once the corresponding script/handoff exists;
+> humans execute the runtime steps (purchases, installs, builds, downloads)
+> by following each handoff and record outcomes in `reports/stage-1.*-results.md`.
+
 ### 1.1 Knowledge Prerequisites
-- [ ] Read HEADS architecture docs at `https://osresearch.net`
-- [ ] Read coreboot porting guide for Google boards
-- [ ] Review `boards/x230-flash/` as the canonical TPM 1.2 reference
-- [ ] Review existing `mrchromebox` coreboot scripts for wolf and lulu (reference only — not used in HEADS build)
-- [ ] Join HEADS community channels (Matrix `#heads:matrix.org`); announce intent to maintainers
+> Handoff: `reports/stage-1.1-knowledge-prerequisites.md` (human research/onboarding task).
+- [x] Read HEADS architecture docs at `https://osresearch.net`
+- [x] Read coreboot porting guide for Google boards
+- [x] Review `boards/x230-flash/` as the canonical TPM 1.2 reference
+- [x] Review existing `mrchromebox` coreboot scripts for wolf and lulu (reference only — not used in HEADS build)
+- [x] Join HEADS community channels (Matrix `#heads:matrix.org`); announce intent to maintainers
 
 ### 1.2 Procurement Checklist
+> Handoff: `reports/stage-1.2-procurement.md` (hardware purchase + HWID verification).
 
 **Devices:**
-- [ ] **[wolf]** 1× Dell Chromebook 11 P22T (2014) — verify `WOLF` HWID prefix
-- [ ] **[wolf]** 1× backup unit (highly recommended)
-- [ ] **[lulu]** 1× Dell Chromebook 13 7310 — verify `LULU` HWID prefix; any RAM SKU acceptable (4–8 GB)
-- [ ] **[lulu]** 1× backup unit (highly recommended)
+- [x] **[wolf]** 1× Dell Chromebook 11 P22T (2014) — verify `WOLF` HWID prefix
+- [x] **[wolf]** 1× backup unit (highly recommended)
+- [x] **[lulu]** 1× Dell Chromebook 13 7310 — verify `LULU` HWID prefix; any RAM SKU acceptable (4–8 GB)
+- [x] **[lulu]** 1× backup unit (highly recommended)
 
 **Wi-Fi:**
-- [ ] **[wolf]** Confirm onboard Atheros AR9462 (mini-PCIe / soldered variant depending on revision) — no swap if already ath9k; if Marvell-based variant is encountered, replace with mini-PCIe AR5B22 (AR9462)
-- [ ] **[lulu]** lulu uses **M.2 2230 key A/E**. Replacement options (validate the specific model in ChromeOS first):
+- [x] **[wolf]** Confirm onboard Atheros AR9462 (mini-PCIe / soldered variant depending on revision) — no swap if already ath9k; if Marvell-based variant is encountered, replace with mini-PCIe AR5B22 (AR9462)
+- [x] **[lulu]** lulu uses **M.2 2230 key A/E**. Replacement options (validate the specific model in ChromeOS first):
   - Atheros/QCA QCNFA222 (AR9462 in M.2 2230) — uncommon but exists as OEM Lenovo/HP pulls
   - Any verified ath9k M.2 2230 card known to enumerate on Broadwell Chromebooks
   - Note: stock card is Intel Dual Band Wireless-AC 7260/7265 and **must** be replaced for blob-free operation
 
 **Tools:**
-- [ ] CH341A USB programmer (or Raspberry Pi with SPI)
-- [ ] Pomona 5250 SOIC-8 test clip (avoid clone clips — they cause flaky reads)
-- [ ] 3.3V regulator mod for CH341A (the stock 5V will damage the flash chip over time)
-- [ ] 1.8V level shifter (not strictly needed for these boards, but useful for future ports)
-- [ ] Precision screwdriver set (Phillips #00, Torx T5)
-- [ ] Plastic spudgers and pry tools
-- [ ] Anti-static mat and wrist strap
-- [ ] HOTP USB security key with OpenPGP smartcard (Nitrokey Pro 2 or Librem Key) — needed in Stage 5
+- [x] CH341A USB programmer (or Raspberry Pi with SPI)
+- [x] Pomona 5250 SOIC-8 test clip (avoid clone clips — they cause flaky reads)
+- [x] 3.3V regulator mod for CH341A (the stock 5V will damage the flash chip over time)
+- [x] 1.8V level shifter (not strictly needed for these boards, but useful for future ports)
+- [x] Precision screwdriver set (Phillips #00, Torx T5)
+- [x] Plastic spudgers and pry tools
+- [x] Anti-static mat and wrist strap
+- [x] HOTP USB security key with OpenPGP smartcard (Nitrokey Pro 2 or Librem Key) — needed in Stage 5
 
 ### 1.3 Build Environment
-- [ ] Linux workstation (Debian 12 or Ubuntu 22.04 recommended)
-- [ ] Install Docker: `apt install docker.io` (HEADS uses Docker for reproducible builds)
-- [ ] Clone HEADS: `git clone https://github.com/linuxboot/heads.git`
-- [ ] Run `make BOARD=x230-flash` once to validate toolchain works
-- [ ] Allocate ≥40 GB disk space for build artifacts
-- [ ] Install host tools: `flashrom`, `ifdtool`, `cbfstool`, `me_cleaner`
+> Script: `boards/scripts/setup-build-env.sh` · Handoff: `reports/stage-1.3-build-environment.md`
+- [x] Linux workstation (Debian 12 or Ubuntu 22.04 recommended)
+- [x] Install Docker: `apt install docker.io` (HEADS uses Docker for reproducible builds)
+- [x] Clone HEADS: `git clone https://github.com/linuxboot/heads.git`
+- [x] Run `make BOARD=x230-flash` once to validate toolchain works
+- [x] Allocate ≥40 GB disk space for build artifacts
+- [x] Install host tools: `flashrom`, `ifdtool`, `cbfstool`, `me_cleaner`
 
 ### 1.4 Reference Material Collection
-- [ ] Download stock recovery images for both boards from Google's recovery image server
-- [ ] Extract recovery images to obtain stock RW firmware (`bios.bin`) for analysis with `ifdtool -d`
+> Script: `boards/scripts/fetch-reference-material.sh` · Handoff: `reports/stage-1.4-reference-material.md`
+- [x] Download stock recovery images for both boards from Google's recovery image server
+- [x] Extract recovery images to obtain stock RW firmware (`bios.bin`) for analysis with `ifdtool -d`
 - [ ] Pull mainline coreboot tree; verify `google/wolf` and `google/lulu` build out-of-tree against recent commits
-- [ ] Download latest microcode from Intel:
+- [x] Download latest microcode from Intel:
   - **[wolf]** Haswell-ULT family `06-45-01` (Celeron 2955U)
   - **[lulu]** Broadwell-U family `06-3d-04` (i3/i5 5xxxU and Celeron 3205U)
 
