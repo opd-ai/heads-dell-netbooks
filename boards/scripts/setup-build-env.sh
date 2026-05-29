@@ -99,7 +99,7 @@ DISK_CHECK_DIR="$PARENT_DIR"
 if [ "$DRY_RUN" -eq 0 ]; then
   mkdir -p "$PARENT_DIR"
 elif [ ! -d "$PARENT_DIR" ]; then
-  while [ ! -d "$DISK_CHECK_DIR" ] && [ "$DISK_CHECK_DIR" != "/" ]; do
+  while [ -n "$DISK_CHECK_DIR" ] && [ ! -d "$DISK_CHECK_DIR" ] && [ "$DISK_CHECK_DIR" != "/" ]; do
     DISK_CHECK_DIR="$(dirname "$DISK_CHECK_DIR")"
   done
   warn "dry-run: $PARENT_DIR does not exist; checking free space at $DISK_CHECK_DIR instead."

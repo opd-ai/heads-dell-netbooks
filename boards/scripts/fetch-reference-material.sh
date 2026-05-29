@@ -67,7 +67,9 @@ for tool in curl grep awk sha1sum; do
   command -v "$tool" >/dev/null 2>&1 || { err "Required tool '$tool' not found."; exit 1; }
 done
 
-mkdir -p "$OUT_DIR"
+if [ "$DRY_RUN" -eq 0 ]; then
+  mkdir -p "$OUT_DIR"
+fi
 
 # ---- recovery.conf parser --------------------------------------------------
 # Google's recovery.conf is a series of blank-line-separated stanzas. Each
@@ -140,7 +142,9 @@ fetch_board() {
   local board="$1" codename="$2"
   local dest_dir="$OUT_DIR/$board"
   local board_failed=0
-  mkdir -p "$dest_dir"
+  if [ "$DRY_RUN" -eq 0 ]; then
+    mkdir -p "$dest_dir"
+  fi
   log "=== Reference material for $board (codename: $codename) ==="
 
   local matches; matches="$(lookup_image "$codename" || true)"

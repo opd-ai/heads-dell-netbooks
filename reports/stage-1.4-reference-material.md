@@ -55,7 +55,7 @@ Do:
 ```bash
 for board in wolf lulu; do
   cd "reference-material/${board}"
-  unzip -o *.zip                    # yields chromiumos_image.bin (or *.bin)
+  unzip -o chromeos_*.zip           # yields chromiumos_image.bin (or *.bin)
 done
 ```
 Expected: A multi-GB `*.bin` ChromeOS disk image is extracted for each board.
