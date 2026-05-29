@@ -139,20 +139,30 @@ download_and_verify() {
 fetch_board() {
   local board="$1" codename="$2"
   local dest_dir="$OUT_DIR/$board"
+  local board_failed=0
   mkdir -p "$dest_dir"
   log "=== Reference material for $board (codename: $codename) ==="
 
   local matches; matches="$(lookup_image "$codename" || true)"
   if [ -z "$matches" ]; then
-    warn "No recovery image found for '$codename' in recovery.conf."
-    warn "Verify the codename or fetch manually; see the handoff report."
-    return 0
+    if [ "$DRY_RUN" -eq 1 ]; then
+      warn "No recovery image preview available for '$codename' (recovery.conf not cached)."
+      return 0
+    fi
+    err "No recovery image found for '$codename' in recovery.conf."
+    err "Verify the codename mapping or recovery.conf contents before continuing."
+    return 1
   fi
 
-  printf '%s\n' "$matches" | while IFS="$(printf '\t')" read -r url sha1; do
+  while IFS="$(printf '\t')" read -r url sha1; do
     [ -z "$url" ] && continue
-    download_and_verify "$url" "$sha1" "$dest_dir" || warn "Download failed for $url"
-  done
+    if ! download_and_verify "$url" "$sha1" "$dest_dir"; then
+      err "Download or verification failed for $url"
+      board_failed=1
+    fi
+  done < <(printf '%s\n' "$matches")
+
+  return "$board_failed"
 }
 
 # ---- Microcode acquisition -------------------------------------------------
@@ -179,15 +189,13 @@ fetch_microcode() {
 }
 
 # ---- Main ------------------------------------------------------------------
-fetch_recovery_conf || warn "Could not fetch recovery.conf; recovery downloads will be skipped."
+fetch_recovery_conf
 
-if [ -r "$CONF_CACHE" ] || [ "$DRY_RUN" -eq 1 ]; then
-  case "$BOARD" in
-    wolf) fetch_board wolf "$WOLF_CODENAME" ;;
-    lulu) fetch_board lulu "$LULU_CODENAME" ;;
-    both) fetch_board wolf "$WOLF_CODENAME"; fetch_board lulu "$LULU_CODENAME" ;;
-  esac
-fi
+case "$BOARD" in
+  wolf) fetch_board wolf "$WOLF_CODENAME" ;;
+  lulu) fetch_board lulu "$LULU_CODENAME" ;;
+  both) fetch_board wolf "$WOLF_CODENAME"; fetch_board lulu "$LULU_CODENAME" ;;
+esac
 
 fetch_microcode
 

@@ -95,13 +95,21 @@ fi
 # ---- 2. Disk space check ---------------------------------------------------
 log "Verifying at least ${MIN_DISK_GB} GB free for build artifacts"
 PARENT_DIR="$(dirname "$HEADS_DIR")"
-mkdir -p "$PARENT_DIR"
-AVAIL_GB="$(df -BG --output=avail "$PARENT_DIR" | tail -1 | tr -dc '0-9')"
+DISK_CHECK_DIR="$PARENT_DIR"
+if [ "$DRY_RUN" -eq 0 ]; then
+  mkdir -p "$PARENT_DIR"
+elif [ ! -d "$PARENT_DIR" ]; then
+  while [ ! -d "$DISK_CHECK_DIR" ] && [ "$DISK_CHECK_DIR" != "/" ]; do
+    DISK_CHECK_DIR="$(dirname "$DISK_CHECK_DIR")"
+  done
+  warn "dry-run: $PARENT_DIR does not exist; checking free space at $DISK_CHECK_DIR instead."
+fi
+AVAIL_GB="$(df -BG --output=avail "$DISK_CHECK_DIR" | tail -1 | tr -dc '0-9')"
 if [ "${AVAIL_GB:-0}" -lt "$MIN_DISK_GB" ]; then
-  err "Only ${AVAIL_GB} GB free at ${PARENT_DIR}; HEADS needs >= ${MIN_DISK_GB} GB."
+  err "Only ${AVAIL_GB} GB free at ${DISK_CHECK_DIR}; HEADS needs >= ${MIN_DISK_GB} GB."
   exit 1
 fi
-ok "${AVAIL_GB} GB free at ${PARENT_DIR}"
+ok "${AVAIL_GB} GB free at ${DISK_CHECK_DIR}"
 
 # ---- 3. Package installation ----------------------------------------------
 # docker.io      : HEADS uses Docker for reproducible builds.

@@ -91,7 +91,7 @@ The two ports share approximately 70% of the work: build environment, HEADS fram
 > Script: `boards/scripts/fetch-reference-material.sh` · Handoff: `reports/stage-1.4-reference-material.md`
 - [x] Download stock recovery images for both boards from Google's recovery image server
 - [x] Extract recovery images to obtain stock RW firmware (`bios.bin`) for analysis with `ifdtool -d`
-- [x] Pull mainline coreboot tree; verify `google/wolf` and `google/lulu` build out-of-tree against recent commits
+- [ ] Pull mainline coreboot tree; verify `google/wolf` and `google/lulu` build out-of-tree against recent commits
 - [x] Download latest microcode from Intel:
   - **[wolf]** Haswell-ULT family `06-45-01` (Celeron 2955U)
   - **[lulu]** Broadwell-U family `06-3d-04` (i3/i5 5xxxU and Celeron 3205U)

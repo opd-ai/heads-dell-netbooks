@@ -53,32 +53,39 @@ and search for `wolf`/`lulu` to confirm the current image URL, then re-run.
 ### Step 3: Extract the disk image
 Do:
 ```bash
-cd reference-material/wolf
-unzip -o *.zip                      # yields chromiumos_image.bin (or *.bin)
+for board in wolf lulu; do
+  cd "reference-material/${board}"
+  unzip -o *.zip                    # yields chromiumos_image.bin (or *.bin)
+done
 ```
-Expected: A multi-GB `*.bin` ChromeOS disk image is extracted.
-Verify: `ls -lh *.bin` shows the extracted image.
+Expected: A multi-GB `*.bin` ChromeOS disk image is extracted for each board.
+Verify: `ls -lh reference-material/wolf/*.bin reference-material/lulu/*.bin`.
 If fails: Confirm enough free disk (recovery images are large).
 
 ### Step 4: Extract stock firmware (bios.bin)
 Do: Loop-mount the ROOT-A partition and run the shellball extractor.
 ```bash
-sudo kpartx -av chromiumos_image.bin           # maps partitions
-sudo mkdir -p /mnt/cros-root
-sudo mount -o ro /dev/mapper/loop*p3 /mnt/cros-root
-sudo /mnt/cros-root/usr/sbin/chromeos-firmwareupdate \
-     --sb_extract /tmp/wolf-fw
+for board in wolf lulu; do
+  cd "reference-material/${board}"
+  sudo kpartx -av chromiumos_image.bin         # maps partitions
+  sudo mkdir -p /mnt/cros-root
+  sudo mount -o ro /dev/mapper/loop*p3 /mnt/cros-root
+  sudo /mnt/cros-root/usr/sbin/chromeos-firmwareupdate \
+       --sb_extract "/tmp/${board}-fw"
+  sudo umount /mnt/cros-root
+  sudo kpartx -d chromiumos_image.bin
+done
 ```
-Expected: `/tmp/wolf-fw/bios.bin` (the stock RW firmware) is produced.
-Verify: `ls -lh /tmp/wolf-fw/bios.bin` → roughly an 8 MB image.
+Expected: `/tmp/wolf-fw/bios.bin` and `/tmp/lulu-fw/bios.bin` are produced.
+Verify: `ls -lh /tmp/wolf-fw/bios.bin /tmp/lulu-fw/bios.bin` → each roughly an 8 MB image.
 If fails: If `--sb_extract` is unavailable, use `--mode=output` or copy the
 shellball from `/usr/sbin/chromeos-firmwareupdate` and run `--unpack`.
-Cleanup: `sudo umount /mnt/cros-root && sudo kpartx -d chromiumos_image.bin`
 
 ### Step 5: Inspect the descriptor
 Do:
 ```bash
 ifdtool -d /tmp/wolf-fw/bios.bin
+ifdtool -d /tmp/lulu-fw/bios.bin
 ```
 Expected: A valid descriptor dump listing descriptor/ME/(GbE)/BIOS regions.
 Verify: Region offsets/sizes are printed (record them for Stage 3.1/4.1).
@@ -100,7 +107,7 @@ Verify: Hashes captured into build metadata.
 ### Step 7: Record all hashes
 Do:
 ```bash
-sha256sum /tmp/wolf-fw/bios.bin reference-material/wolf/*.zip \
+sha256sum /tmp/wolf-fw/bios.bin /tmp/lulu-fw/bios.bin reference-material/wolf/*.zip \
           reference-material/lulu/*.zip
 ```
 Expected: SHA256 for every acquired artifact.
@@ -108,7 +115,7 @@ Verify: Hashes saved to `reports/stage-1.4-results.md`.
 
 ## Success Criteria
 - [ ] Verified recovery image downloaded for wolf and for lulu
-- [ ] Stock `bios.bin` extracted for at least wolf (lulu also if available)
+- [ ] Stock `bios.bin` extracted for both wolf and lulu
 - [ ] `ifdtool -d` produces a valid descriptor dump with recorded region layout
 - [ ] Microcode `06-45-01` (wolf) and `06-3d-04` (lulu) located from a pinned tag
 - [ ] SHA256 recorded for every acquired blob
