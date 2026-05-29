@@ -1,0 +1,8 @@
+# Downloaded reference material and firmware blobs must never be committed.
+# These are acquired locally per reports/stage-1.4-reference-material.md.
+/reference-material/
+*.rom
+*.bin
+*.fw
+*.ucode
+recovery.conf
